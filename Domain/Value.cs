@@ -2,7 +2,7 @@
 
 namespace Domain
 {
-    public class Values
+    public class Value
     {
         public int Id { get; set; }
 

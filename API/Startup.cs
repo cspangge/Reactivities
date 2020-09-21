@@ -29,7 +29,12 @@ namespace API
         {
             services.AddDbContext<DataContext>(options =>
             {
-                options.UseSqlite(Configuration.GetConnectionString("DefaultConnection"));
+                options.EnableSensitiveDataLogging(true);
+                options.UseSqlite(Configuration.GetConnectionString("DefaultConnection"), opts =>
+                {
+                    //指定单次批量插入最大数量
+                    opts.MaxBatchSize(100);
+                });
             });
 
             services.AddControllers();

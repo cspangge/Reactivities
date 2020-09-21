@@ -22,7 +22,7 @@ namespace API.Controllers
 
         // GET api/values
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Values>>> Get()
+        public async Task<ActionResult<IEnumerable<Value>>> Get()
         {
             var values = await _context.Values.ToListAsync();
             return Ok(values);
@@ -30,7 +30,7 @@ namespace API.Controllers
 
         // GET api/values/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Values>> Get(int id)
+        public async Task<ActionResult<Value>> Get(int id)
         {
             // var result = await _context.Values.Where(e => e.Id == id).SingleOrDefaultAsync();
             var result = await _context.Values.FindAsync(id);
