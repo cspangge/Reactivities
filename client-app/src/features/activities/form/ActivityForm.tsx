@@ -1,6 +1,8 @@
 import React, { FormEvent, useState } from "react";
 import { Button, Form, Segment } from "semantic-ui-react";
 import { IActivity } from "../../../app/model/activity";
+import "react-native-get-random-values";
+import { v4 as uuidv4 } from "uuid";
 
 interface IProps {
   setEditMode: (editMode: boolean) => void;
@@ -24,7 +26,7 @@ const ActivityForm: React.FC<IProps> = ({
         title: "",
         category: "",
         description: "",
-        date: new Date(),
+        date: "",
         city: "",
         venue: "",
       };
@@ -45,7 +47,7 @@ const ActivityForm: React.FC<IProps> = ({
     if (activity.id.length === 0) {
       let newActivity = {
         ...activity,
-        id: "guid",
+        id: uuidv4(),
       };
       createActivity(newActivity);
     } else {
@@ -76,7 +78,7 @@ const ActivityForm: React.FC<IProps> = ({
           onChange={handleInputChange}
         />
         <Form.Input
-          type="date"
+          type="datetime-local"
           placeholder="Date"
           value={activity.date}
           name="date"

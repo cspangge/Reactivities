@@ -27,7 +27,10 @@ const App = () => {
   };
 
   const handleCreateActivity = (activity: IActivity) => {
+    // console.log(activity.id);
     setActivities([...activities, activity]);
+    setSelectedActivity(activity);
+    setEditMode(false);
   };
 
   const handleEditActivity = (activity: IActivity) => {
@@ -35,6 +38,12 @@ const App = () => {
       ...activities.filter((a) => a.id !== activity.id),
       activity,
     ]);
+    setSelectedActivity(activity);
+    setEditMode(false);
+  };
+
+  const handleDeleteActivity = (id: string) => {
+    setActivities([...activities.filter((elem) => elem.id !== id)]);
   };
 
   useEffect(() => {
@@ -42,7 +51,12 @@ const App = () => {
       .get<IActivity[]>("http://localhost:5000/api/activities")
       .then((response) => {
         // console.log(response);
-        setActivities(response.data);
+        let activities: IActivity[] = [];
+        response.data.forEach((elem) => {
+          elem.date = elem.date.toString().split(".")[0];
+          activities.push(elem);
+        });
+        setActivities(activities);
       });
   }, []);
   // [] ensure useEffect runs one time only, and doesn't continuously
@@ -71,6 +85,7 @@ const App = () => {
           setSelectedActivity={setSelectedActivity}
           createActivity={handleCreateActivity}
           editActivity={handleEditActivity}
+          deleteActivity={handleDeleteActivity}
         />
         {/*
         selectedActivity={selectedActivity}
