@@ -1,29 +1,28 @@
-import React, { FormEvent, Fragment, useState } from "react";
+import React, { FormEvent, Fragment, useContext, useState } from "react";
 import { Button, Form, Segment } from "semantic-ui-react";
 import { IActivity } from "../../../app/model/activity";
 import "react-native-get-random-values";
 import { v4 as uuidv4 } from "uuid";
 import Notification from "../../../app/layout/Notification";
+import ActivityStore from "../../../app/stores/activitiesStore";
+import { observer } from "mobx-react-lite";
 
 interface IProps {
-  setEditMode: (editMode: boolean) => void;
   activity: IActivity;
-  createActivity: (activity: IActivity) => void;
-  editActivity: (activity: IActivity) => void;
-  submitting: boolean;
 }
 
 const showNotification = (show: boolean) => {
   return show && <Notification />;
 };
 
-const ActivityForm: React.FC<IProps> = ({
-  setEditMode,
-  activity: initialFormState,
-  createActivity,
-  editActivity,
-  submitting,
-}) => {
+const ActivityForm: React.FC<IProps> = ({ activity: initialFormState }) => {
+  const activityStore = useContext(ActivityStore);
+  const {
+    createActivity,
+    editActivity,
+    submitting,
+    closeEditForm,
+  } = activityStore;
   const initializeForm = () => {
     if (initialFormState) {
       return initialFormState;
@@ -117,7 +116,7 @@ const ActivityForm: React.FC<IProps> = ({
             negative
             type="cancel"
             content="Cancel"
-            onClick={() => setEditMode(false)}
+            onClick={closeEditForm}
           />
         </Form>
       </Segment>
@@ -126,4 +125,4 @@ const ActivityForm: React.FC<IProps> = ({
   );
 };
 
-export default ActivityForm;
+export default observer(ActivityForm);
