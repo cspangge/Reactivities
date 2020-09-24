@@ -18,8 +18,27 @@ class ActivityStore {
     // return this.activities.sort(
     //   (b, a) => Date.parse(a.date) - Date.parse(b.date)
     // );
-    return Array.from(this.activityRegistry.values()).sort(
+    // console.log(
+    //   this.groupActivitiesByDate(Array.from(this.activityRegistry.values()))
+    // );
+    return this.groupActivitiesByDate(
+      Array.from(this.activityRegistry.values())
+    );
+  }
+
+  groupActivitiesByDate(activities: IActivity[]) {
+    const sortedActivities = activities.sort(
       (b, a) => Date.parse(a.date) - Date.parse(b.date)
+    );
+    return Object.entries(
+      sortedActivities.reduce((activities, activity) => {
+        // 按日期分组
+        const date = activity.date.split("T")[0];
+        activities[date] = activities[date]
+          ? [...activities[date], activity]
+          : [activity];
+        return activities;
+      }, {} as { [key: string]: IActivity[] })
     );
   }
 
