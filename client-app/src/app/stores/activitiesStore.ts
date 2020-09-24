@@ -78,6 +78,7 @@ class ActivityStore {
         runInAction("Data Loaded Failed", () => {
           this.loadingInitial = false;
         });
+        // throw error;
       }
     }
   };

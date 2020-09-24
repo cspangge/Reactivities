@@ -43,6 +43,8 @@ namespace API.Controllers
         // Implicitly using [FromBody] here
         public async Task<ActionResult<Unit>> Create([FromBody] Create.Command command)
         {
+            // if (!ModelState.IsValid)
+            //     return BadRequest(ModelState);
             return await _mediator.Send(command);
         }
 

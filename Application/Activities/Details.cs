@@ -1,6 +1,8 @@
 using System;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using Application.Errors;
 using Domain;
 using MediatR;
 using Persistence;
@@ -26,9 +28,18 @@ namespace Application.Activities
 
         public async Task<Activity> Handle(Query request, CancellationToken cancellationToken)
         {
-            var activities = await _context.Activities.FindAsync(request.Id);
+            // Testing 500 Error
+            // Start Here
+            // throw new Exception("Server stop working");
+            // End Here
 
-            return activities;
+            var activity = await _context.Activities.FindAsync(request.Id);
+
+            if (activity == null)
+                // throw new Exception("Could not find activity");
+                throw new RestException(HttpStatusCode.NotFound, new { activity = "Not Found" });
+
+            return activity;
         }
     }
 }

@@ -1,6 +1,8 @@
 using System;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using Application.Errors;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Persistence;
@@ -28,8 +30,11 @@ namespace Application.Activities
             {
                 var activity = await _context.Activities.FindAsync(request.Id);
 
+                // 1. Always return a result object to the API controller
+                // 2. One request give a response
                 if (activity == null)
-                    throw new Exception("Could not find activity");
+                    // throw new Exception("Could not find activity");
+                    throw new RestException(HttpStatusCode.NotFound, new { activity = "Not Found" });
 
                 _context.Remove(activity);
 
