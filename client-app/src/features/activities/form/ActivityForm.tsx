@@ -7,6 +7,12 @@ import Notification from "../../../app/layout/Notification";
 import ActivityStore from "../../../app/stores/activitiesStore";
 import { observer } from "mobx-react-lite";
 import { RouteComponentProps } from "react-router-dom";
+import { Form as FinalForm, Field } from "react-final-form";
+import TextInput from "../../../app/common/form/TextInput";
+import TextAreaInput from "../../../app/common/form/TextAreaInput";
+import SelectInput from "../../../app/common/form/SelectInput";
+import DateInput from "../../../app/common/form/DateInput";
+import { category } from "../../../app/common/options/categoryOptions";
 
 interface DetailsParams {
   id: string;
@@ -56,91 +62,100 @@ const ActivityForm: React.FC<RouteComponentProps<DetailsParams>> = ({
     loadActivity,
   ]);
 
-  const handleInputChange = (
-    event: FormEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    // setActivity({ ...activity, [event.target.name]: event.target.value });
-    const { name, value } = event.currentTarget;
-    setActivity({ ...activity, [name]: value });
+  const handleFinalFormSubmit = (values: any) => {
+    console.log(values);
   };
 
-  const handleSubmit = () => {
-    if (activity.id.length === 0) {
-      let newActivity = {
-        ...activity,
-        id: uuidv4(),
-      };
-      createActivity(newActivity).then(() =>
-        history.push(`/activities/${newActivity.id}`)
-      );
-    } else {
-      editActivity(activity).then(() =>
-        history.push(`/activities/${activity.id}`)
-      );
-    }
-  };
+  // const handleInputChange = (
+  //   event: FormEvent<HTMLInputElement | HTMLTextAreaElement>
+  // ) => {
+  //   // setActivity({ ...activity, [event.target.name]: event.target.value });
+  //   const { name, value } = event.currentTarget;
+  //   setActivity({ ...activity, [name]: value });
+  // };
+
+  // const handleSubmit = () => {
+  //   if (activity.id.length === 0) {
+  //     let newActivity = {
+  //       ...activity,
+  //       id: uuidv4(),
+  //     };
+  //     createActivity(newActivity).then(() =>
+  //       history.push(`/activities/${newActivity.id}`)
+  //     );
+  //   } else {
+  //     editActivity(activity).then(() =>
+  //       history.push(`/activities/${activity.id}`)
+  //     );
+  //   }
+  // };
 
   return (
     <Grid>
       <Grid.Column width={10}>
         <Segment clearing>
-          <Form>
-            <Form.Input
-              placeholder="Title"
-              value={activity.title}
-              name="title"
-              onChange={handleInputChange}
-            />
-            <Form.TextArea
-              rows={3}
-              placeholder="Description"
-              value={activity.description}
-              name="description"
-              onChange={handleInputChange}
-            />
-            <Form.Input
-              placeholder="Category"
-              value={activity.category}
-              name="category"
-              onChange={handleInputChange}
-            />
-            <Form.Input
-              type="datetime-local"
-              placeholder="Date"
-              value={activity.date}
-              name="date"
-              onChange={handleInputChange}
-            />
-            <Form.Input
-              placeholder="City"
-              value={activity.city}
-              name="city"
-              onChange={handleInputChange}
-            />
-            <Form.Input
-              placeholder="Venue"
-              value={activity.venue}
-              name="venue"
-              onChange={handleInputChange}
-            />
-            <Button
-              floated="right"
-              positive
-              type="submit"
-              content="Submit"
-              onClick={handleSubmit}
-              loading={submitting}
-            />
-            <Button
-              floated="right"
-              negative
-              type="cancel"
-              content="Cancel"
-              onClick={() => {
-                history.push("/activities");
-              }}
-            />
-          </Form>
+          <FinalForm
+            onSubmit={handleFinalFormSubmit}
+            render={({ handleSubmit }) => (
+              <Form onSubmit={handleSubmit}>
+                <Field
+                  placeholder="Title"
+                  value={activity.title}
+                  name="title"
+                  component={TextInput}
+                />
+                <Field
+                  placeholder="Description"
+                  value={activity.description}
+                  name="description"
+                  rows={3}
+                  component={TextAreaInput}
+                />
+                <Field
+                  placeholder="Category"
+                  value={activity.category}
+                  name="category"
+                  options={category}
+                  component={SelectInput}
+                />
+                <Field
+                  placeholder="Date"
+                  value={activity.date}
+                  name="date"
+                  component={DateInput}
+                />
+                <Field
+                  placeholder="City"
+                  value={activity.city}
+                  name="city"
+                  component={TextInput}
+                />
+                <Field
+                  placeholder="Venue"
+                  value={activity.venue}
+                  name="venue"
+                  component={TextInput}
+                />
+                <Button
+                  floated="right"
+                  positive
+                  type="submit"
+                  content="Submit"
+                  onClick={handleSubmit}
+                  loading={submitting}
+                />
+                <Button
+                  floated="right"
+                  negative
+                  type="cancel"
+                  content="Cancel"
+                  onClick={() => {
+                    history.push("/activities");
+                  }}
+                />
+              </Form>
+            )}
+          />
         </Segment>
         {showNotification(submitting)}
       </Grid.Column>
