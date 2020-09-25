@@ -28,12 +28,12 @@ class ActivityStore {
 
   groupActivitiesByDate(activities: IActivity[]) {
     const sortedActivities = activities.sort(
-      (b, a) => Date.parse(a.date) - Date.parse(b.date)
+      (b, a) => a.date!.getTime() - b.date!.getTime()
     );
     return Object.entries(
       sortedActivities.reduce((activities, activity) => {
         // 按日期分组
-        const date = activity.date.split("T")[0];
+        const date = activity.date!.toString().split("T")[0];
         activities[date] = activities[date]
           ? [...activities[date], activity]
           : [activity];
@@ -48,7 +48,7 @@ class ActivityStore {
       const activities = await agent.Activities.list();
       runInAction("Data Loaded Successful", () => {
         activities.forEach((activity) => {
-          activity.date = activity.date.toString().split(".")[0];
+          activity.date = new Date(activity.date!);
           // this.activities.push(activity);
           this.activityRegistry.set(activity.id, activity);
         });
@@ -70,6 +70,7 @@ class ActivityStore {
       try {
         activity = await agent.Activities.details(id);
         runInAction("Data Loaded Successful", () => {
+          activity.date = new Date(activity.date);
           this.activity = activity;
           this.loadingInitial = false;
         });

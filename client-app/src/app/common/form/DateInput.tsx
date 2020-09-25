@@ -11,12 +11,14 @@ const DateInput: React.FC<IProps> = ({
   input,
   width,
   placeholder,
+  messages,
   meta: { touched, error },
   ...rest
 }) => {
   return (
     <Form.Field error={touched && !!error} width={width}>
       <DateTimePicker
+        messages={messages}
         placeholder={placeholder}
         value={input.value || null}
         onChange={input.onChange}
