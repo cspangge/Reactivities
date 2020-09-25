@@ -1,4 +1,4 @@
-import { IActivity } from "./../model/activity";
+import { IActivity } from "../model/activity";
 import { observable, action, computed, configure, runInAction } from "mobx";
 import { createContext, SyntheticEvent } from "react";
 import agent from "../api/agent";
@@ -28,12 +28,12 @@ class ActivityStore {
 
   groupActivitiesByDate(activities: IActivity[]) {
     const sortedActivities = activities.sort(
-      (b, a) => a.date!.getTime() - b.date!.getTime()
+      (b, a) => a.date.getTime() - b.date.getTime()
     );
     return Object.entries(
       sortedActivities.reduce((activities, activity) => {
         // 按日期分组
-        const date = activity.date!.toString().split("T")[0];
+        const date = activity.date.toString().split("T")[0];
         activities[date] = activities[date]
           ? [...activities[date], activity]
           : [activity];
@@ -48,7 +48,7 @@ class ActivityStore {
       const activities = await agent.Activities.list();
       runInAction("Data Loaded Successful", () => {
         activities.forEach((activity) => {
-          activity.date = new Date(activity.date!);
+          activity.date = new Date(activity.date);
           // this.activities.push(activity);
           this.activityRegistry.set(activity.id, activity);
         });
@@ -64,8 +64,10 @@ class ActivityStore {
 
   @action loadActivity = async (id: string) => {
     let activity = this.getActivity(id);
-    if (activity) this.activity = activity;
-    else {
+    if (activity) {
+      this.activity = activity;
+      return activity;
+    } else {
       this.loadingInitial = true;
       try {
         activity = await agent.Activities.details(id);
@@ -74,6 +76,7 @@ class ActivityStore {
           this.activity = activity;
           this.loadingInitial = false;
         });
+        return activity;
       } catch (error) {
         console.log(error);
         runInAction("Data Loaded Failed", () => {
