@@ -27,6 +27,10 @@ const DateInput: React.FC<IProps> = ({
         date={date}
         time={time}
         {...rest}
+        onBlur={input.onBlur}
+        onKeyDown={(e) => {
+          e.preventDefault(); // Prevent input from keyboard, only select from component is available
+        }}
       />
       {touched && error && (
         <Label basic color="red">

@@ -2,6 +2,8 @@ import { IActivity } from "../model/activity";
 import { observable, action, computed, configure, runInAction } from "mobx";
 import { createContext, SyntheticEvent } from "react";
 import agent from "../api/agent";
+import { history } from "../..";
+import { toast } from "react-toastify";
 
 configure({ enforceActions: "always" }); // strict mode 只可以通过actions来修改状态
 
@@ -10,7 +12,6 @@ class ActivityStore {
   // @observable activities: IActivity[] = [];
   @observable loadingInitial = false;
   @observable activity: IActivity | null = null;
-  @observable editMode = false;
   @observable submitting = false;
   @observable target = "";
 
@@ -74,6 +75,7 @@ class ActivityStore {
         runInAction("Data Loaded Successful", () => {
           activity.date = new Date(activity.date);
           this.activity = activity;
+          this.activityRegistry.set(activity.id, activity);
           this.loadingInitial = false;
         });
         return activity;
@@ -102,15 +104,16 @@ class ActivityStore {
       // this.activities.push(activity);
       runInAction("Data Created Successful", () => {
         this.activityRegistry.set(activity.id, activity);
-        this.editMode = false;
         this.submitting = false;
       });
+      history.push(`/activities/${activity.id}`);
     } catch (error) {
-      console.log(error);
+      // console.log(error);
       runInAction("Data Created Failed", () => {
-        this.editMode = false;
         this.submitting = false;
       });
+      // console.log(error.response);
+      toast.error("Problem submitting data");
     }
   };
 
@@ -121,15 +124,15 @@ class ActivityStore {
       runInAction("Data Edited Successful", () => {
         this.activityRegistry.set(activity.id, activity);
         this.activity = activity;
-        this.editMode = false;
         this.submitting = false;
       });
+      history.push(`/activities/${activity.id}`);
     } catch (error) {
-      console.log(error);
+      // console.log(error);
       runInAction("Data Edited Failed", () => {
-        this.editMode = false;
         this.submitting = false;
       });
+      toast.error("Problem submitting data");
     }
   };
 
@@ -147,11 +150,12 @@ class ActivityStore {
         this.target = "";
       });
     } catch (error) {
-      console.log(error);
+      // console.log(error);
       runInAction("Data Deleted Failed", () => {
         this.submitting = false;
         this.target = "";
       });
+      toast.error("Problem deleting data");
     }
   };
 }

@@ -20,7 +20,7 @@ const App: React.FC<RouteComponentProps> = ({ location }) => {
     <Fragment>
       <ToastContainer
         position="bottom-right"
-        autoClose={false}
+        autoClose={5000}
         pauseOnFocusLoss
         closeOnClick
       />

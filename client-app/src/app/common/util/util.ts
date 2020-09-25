@@ -1,12 +1,6 @@
 export const combineDateAndTime = (date: Date, time: Date) => {
   const timeString =
-    time.getHours() +
-    ":" +
-    time.getMinutes() +
-    ":" +
-    time.getSeconds() +
-    ":" +
-    time.getMilliseconds();
+    time.getHours() + ":" + time.getMinutes() + ":" + time.getSeconds();
   const year = date.getFullYear();
   const month = date.getMonth() + 1;
   const day = date.getDate();

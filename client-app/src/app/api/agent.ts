@@ -28,10 +28,13 @@ axios.interceptors.response.use(undefined, (error) => {
       case 400: // Bad request
         if (config.method === "get" && data.errors.hasOwnProperty("id"))
           history.push("/notfound");
+        else throw error;
         break;
       case 500: // Server can not handle this request
         toast.error("Server error!!!");
         break;
+      default:
+        throw error;
     }
   }
 });

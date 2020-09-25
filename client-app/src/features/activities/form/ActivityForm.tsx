@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { Button, Form, Grid, Segment } from "semantic-ui-react";
 import { ActivityFormValues } from "../../../app/model/activity";
 import "react-native-get-random-values";
-// import { v4 as uuidv4 } from "uuid";
+import { v4 as uuidv4 } from "uuid";
 import Notification from "../../../app/layout/Notification";
 import ActivityStore from "../../../app/stores/activityStore";
 import { observer } from "mobx-react-lite";
@@ -14,6 +14,27 @@ import SelectInput from "../../../app/common/form/SelectInput";
 import DateInput from "../../../app/common/form/DateInput";
 import { category } from "../../../app/common/options/categoryOptions";
 import { combineDateAndTime } from "../../../app/common/util/util";
+import {
+  combineValidators,
+  isRequired,
+  composeValidators,
+  hasLengthGreaterThan,
+} from "revalidate";
+
+// Form Validation
+// http://revalidate.jeremyfairbank.com/common-validators/hasLengthGreaterThan.html
+const validate = combineValidators({
+  title: isRequired("Title"),
+  category: isRequired({ message: "Category is required" }),
+  description: composeValidators(
+    isRequired("Description"),
+    hasLengthGreaterThan(4)("Description")
+  )(),
+  city: isRequired({ message: "City is required" }),
+  venue: isRequired({ message: "Venue is required" }),
+  date: isRequired({ message: "Date is required" }),
+  time: isRequired({ message: "Time is required" }),
+});
 
 interface DetailsParams {
   id: string;
@@ -29,11 +50,10 @@ const ActivityForm: React.FC<RouteComponentProps<DetailsParams>> = ({
 }) => {
   const activityStore = useContext(ActivityStore);
   const {
-    // createActivity,
-    // editActivity,
+    createActivity,
+    editActivity,
     submitting,
     loadActivity,
-    clearActivity,
   } = activityStore;
 
   const [activity, setActivity] = useState(new ActivityFormValues());
@@ -72,41 +92,28 @@ const ActivityForm: React.FC<RouteComponentProps<DetailsParams>> = ({
     const dateAndTime = combineDateAndTime(values.date, values.time);
     const { date, time, ...activity } = values;
     activity.date = dateAndTime;
-    console.log(activity);
+    // console.log(activity);
+
+    if (!activity.id) {
+      let newActivity = {
+        ...activity,
+        id: uuidv4(),
+      };
+      createActivity(newActivity);
+    } else {
+      editActivity(activity);
+    }
   };
-
-  // const handleInputChange = (
-  //   event: FormEvent<HTMLInputElement | HTMLTextAreaElement>
-  // ) => {
-  //   // setActivity({ ...activity, [event.target.name]: event.target.value });
-  //   const { name, value } = event.currentTarget;
-  //   setActivity({ ...activity, [name]: value });
-  // };
-
-  // const handleSubmit = () => {
-  //   if (activity.id.length === 0) {
-  //     let newActivity = {
-  //       ...activity,
-  //       id: uuidv4(),
-  //     };
-  //     createActivity(newActivity).then(() =>
-  //       history.push(`/activities/${newActivity.id}`)
-  //     );
-  //   } else {
-  //     editActivity(activity).then(() =>
-  //       history.push(`/activities/${activity.id}`)
-  //     );
-  //   }
-  // };
 
   return (
     <Grid>
       <Grid.Column width={10}>
         <Segment clearing>
           <FinalForm
+            validate={validate}
             initialValues={activity}
             onSubmit={handleFinalFormSubmit}
-            render={({ handleSubmit }) => (
+            render={({ handleSubmit, invalid, pristine }) => (
               <Form onSubmit={handleSubmit} loading={loading}>
                 <Field
                   placeholder="Title"
@@ -163,17 +170,23 @@ const ActivityForm: React.FC<RouteComponentProps<DetailsParams>> = ({
                   content="Submit"
                   onClick={handleSubmit}
                   loading={submitting}
-                  disabled={loading}
+                  disabled={loading || submitting || invalid || pristine}
                 />
                 <Button
                   floated="right"
                   negative
                   type="cancel"
                   content="Cancel"
-                  onClick={() => {
-                    history.push("/activities");
-                  }}
-                  disabled={loading}
+                  onClick={
+                    activity.id
+                      ? () => {
+                          history.push(`/activities/${activity.id}`);
+                        }
+                      : () => {
+                          history.push("/activities");
+                        }
+                  }
+                  disabled={loading || submitting}
                 />
               </Form>
             )}
