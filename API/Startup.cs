@@ -1,8 +1,4 @@
 using System.Text;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using API.Middleware;
 using Application.Activities;
 using Application.Interfaces;
@@ -25,6 +21,7 @@ using Microsoft.IdentityModel.Tokens;
 using Persistence;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using AutoMapper;
 
 namespace API
 {
@@ -42,6 +39,8 @@ namespace API
         {
             services.AddDbContext<DataContext>(options =>
             {
+                // Add Lazy Loading Here
+                options.UseLazyLoadingProxies();
                 options.EnableSensitiveDataLogging(true);
                 options.UseSqlite(Configuration.GetConnectionString("DefaultConnection"), opts =>
                 {
@@ -59,6 +58,9 @@ namespace API
             });
 
             services.AddMediatR(typeof(List.Handler).Assembly);
+
+            // Add AutoMapper here
+            services.AddAutoMapper(typeof(List.Handler));
 
             // Inject Fluent Validation Here
             services
@@ -84,6 +86,17 @@ namespace API
             var identityBuilder = new IdentityBuilder(builder.UserType, builder.Services);
             identityBuilder.AddEntityFrameworkStores<DataContext>();
             identityBuilder.AddSignInManager<SignInManager<AppUser>>();
+
+            // Add special authorization policy
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("IsActivityHost", policy =>
+                {
+                    policy.Requirements.Add(new IsHostRequirement());   // Add policy here
+                });
+            });
+            // Add authorization handler
+            services.AddTransient<IAuthorizationHandler, IsHostRequirementHandler>();
 
             // DOTNET 3.0 Update
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["TokenKey"]));
