@@ -1,3 +1,4 @@
+import { createAttendee, setActivityProps } from "./../common/util/util";
 import { RootStore } from "./rootStore";
 import { IActivity } from "../model/activity";
 import { observable, action, computed, runInAction } from "mobx";
@@ -18,6 +19,7 @@ export default class ActivityStore {
   @observable activity: IActivity | null = null;
   @observable submitting = false;
   @observable target = "";
+  @observable loading = false;
 
   @computed get activitiesByDate() {
     // return this.activities.sort(
@@ -49,11 +51,12 @@ export default class ActivityStore {
 
   @action loadActivities = async () => {
     this.loadingInitial = true;
+    const user = this.rootStore.userStore.user!;
     try {
       const activities = await agent.Activities.list();
       runInAction("Data Loaded Successful", () => {
         activities.forEach((activity) => {
-          activity.date = new Date(activity.date);
+          setActivityProps(activity, user);
           // this.activities.push(activity);
           this.activityRegistry.set(activity.id, activity);
         });
@@ -68,6 +71,7 @@ export default class ActivityStore {
   };
 
   @action loadActivity = async (id: string) => {
+    const user = this.rootStore.userStore.user!;
     let activity = this.getActivity(id);
     if (activity) {
       this.activity = activity;
@@ -77,7 +81,7 @@ export default class ActivityStore {
       try {
         activity = await agent.Activities.details(id);
         runInAction("Data Loaded Successful", () => {
-          activity.date = new Date(activity.date);
+          setActivityProps(activity, user);
           this.activity = activity;
           this.activityRegistry.set(activity.id, activity);
           this.loadingInitial = false;
@@ -105,6 +109,12 @@ export default class ActivityStore {
     this.submitting = true;
     try {
       await agent.Activities.create(activity);
+      const attendee = createAttendee(this.rootStore.userStore.user!);
+      attendee.isHost = true;
+      let attendees = [];
+      attendees.push(attendee);
+      activity.attendees = attendees;
+      activity.isHost = true;
       // this.activities.push(activity);
       runInAction("Data Created Successful", () => {
         this.activityRegistry.set(activity.id, activity);
@@ -160,6 +170,51 @@ export default class ActivityStore {
         this.target = "";
       });
       toast.error("Problem deleting data");
+    }
+  };
+
+  @action attendActivity = async () => {
+    const attendee = createAttendee(this.rootStore.userStore.user!);
+    this.loading = true;
+    try {
+      await agent.Activities.attend(this.activity!.id);
+      runInAction(() => {
+        if (this.activity) {
+          this.activity.attendees.push(attendee);
+          this.activity.isGoing = true;
+          this.activityRegistry.set(this.activity.id, this.activity);
+          this.loading = false;
+        }
+      });
+    } catch (error) {
+      console.log(error);
+      toast.error("Problem signing up to activity");
+      runInAction(() => {
+        this.loading = false;
+      });
+    }
+  };
+
+  @action unattendedActivity = async () => {
+    this.loading = true;
+    try {
+      await agent.Activities.unattended(this.activity!.id);
+      runInAction(() => {
+        if (this.activity) {
+          this.activity.attendees = this.activity.attendees.filter(
+            (a) => a.username !== this.rootStore.userStore.user!.username
+          );
+          this.activity.isGoing = false;
+          this.activityRegistry.set(this.activity.id, this.activity);
+          this.loading = false;
+        }
+      });
+    } catch (error) {
+      console.log(error);
+      toast.error("Problem cancelling attendance");
+      runInAction(() => {
+        this.loading = false;
+      });
     }
   };
 }
