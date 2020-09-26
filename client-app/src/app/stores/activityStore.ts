@@ -1,13 +1,17 @@
+import { RootStore } from "./rootStore";
 import { IActivity } from "../model/activity";
-import { observable, action, computed, configure, runInAction } from "mobx";
-import { createContext, SyntheticEvent } from "react";
+import { observable, action, computed, runInAction } from "mobx";
+import { SyntheticEvent } from "react";
 import agent from "../api/agent";
 import { history } from "../..";
 import { toast } from "react-toastify";
 
-configure({ enforceActions: "always" }); // strict mode 只可以通过actions来修改状态
+export default class ActivityStore {
+  rootStore: RootStore;
+  constructor(rootStore: RootStore) {
+    this.rootStore = rootStore;
+  }
 
-class ActivityStore {
   @observable activityRegistry = new Map();
   // @observable activities: IActivity[] = [];
   @observable loadingInitial = false;
@@ -34,7 +38,7 @@ class ActivityStore {
     return Object.entries(
       sortedActivities.reduce((activities, activity) => {
         // 按日期分组
-        const date = activity.date.toString().split("T")[0];
+        const date = activity.date.toISOString().split("T")[0];
         activities[date] = activities[date]
           ? [...activities[date], activity]
           : [activity];
@@ -159,5 +163,3 @@ class ActivityStore {
     }
   };
 }
-
-export default createContext(new ActivityStore());

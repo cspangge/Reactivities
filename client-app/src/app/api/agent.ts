@@ -1,7 +1,9 @@
+import { IUserFormValues } from "./../model/user";
 import { toast } from "react-toastify";
 import { history } from "./../../index";
 import axios, { AxiosResponse } from "axios";
 import { IActivity } from "../model/activity";
+import { IUser } from "../model/user";
 
 axios.defaults.baseURL = "http://localhost:5000/api";
 
@@ -28,16 +30,30 @@ axios.interceptors.response.use(undefined, (error) => {
       case 400: // Bad request
         if (config.method === "get" && data.errors.hasOwnProperty("id"))
           history.push("/notfound");
-        else throw error;
+        else throw error.response;
         break;
       case 500: // Server can not handle this request
         toast.error("Server error!!!");
         break;
       default:
-        throw error;
+        throw error.response;
     }
   }
 });
+
+// Add request handler
+axios.interceptors.request.use(
+  (config) => {
+    const token = window.localStorage.getItem("jwt");
+
+    if (token) config.headers.Authorization = `Bearer ${token}`;
+
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
 
 const responseBody = (response: AxiosResponse) =>
   response ? response.data : "";
@@ -69,6 +85,15 @@ const Activities = {
   delete: (id: string) => requests.delete(`/activities/${id}`),
 };
 
+const User = {
+  current: (): Promise<IUser> => requests.get("/user"),
+  login: (user: IUserFormValues): Promise<IUser> =>
+    requests.post(`/user/login`, user),
+  register: (user: IUserFormValues): Promise<IUser> =>
+    requests.post(`/user/register`, user),
+};
+
 export default {
   Activities,
+  User,
 };

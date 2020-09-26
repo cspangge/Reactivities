@@ -4,7 +4,6 @@ import { ActivityFormValues } from "../../../app/model/activity";
 import "react-native-get-random-values";
 import { v4 as uuidv4 } from "uuid";
 import Notification from "../../../app/layout/Notification";
-import ActivityStore from "../../../app/stores/activityStore";
 import { observer } from "mobx-react-lite";
 import { RouteComponentProps } from "react-router-dom";
 import { Form as FinalForm, Field } from "react-final-form";
@@ -20,6 +19,7 @@ import {
   composeValidators,
   hasLengthGreaterThan,
 } from "revalidate";
+import { RootStoreContext } from "../../../app/stores/rootStore";
 
 // Form Validation
 // http://revalidate.jeremyfairbank.com/common-validators/hasLengthGreaterThan.html
@@ -48,13 +48,13 @@ const ActivityForm: React.FC<RouteComponentProps<DetailsParams>> = ({
   match,
   history,
 }) => {
-  const activityStore = useContext(ActivityStore);
+  const rootStore = useContext(RootStoreContext);
   const {
     createActivity,
     editActivity,
     submitting,
     loadActivity,
-  } = activityStore;
+  } = rootStore.activityStore;
 
   const [activity, setActivity] = useState(new ActivityFormValues());
   const [loading, setLoading] = useState(false);
