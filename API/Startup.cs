@@ -22,6 +22,7 @@ using Persistence;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using AutoMapper;
+using Infrastructure.Photos;
 
 namespace API
 {
@@ -114,6 +115,10 @@ namespace API
 
             services.AddScoped<IJwtGenerator, JwtGenerator>();  // Inject JwtGenerator, Added it as a service, will have access to lists and methods inside its
             services.AddScoped<IUserAccessor, UserAccessor>();
+
+            // Add Cloudinary Here to support image and video api management
+            services.Configure<CloudinarySettings>(Configuration.GetSection("Cloudinary"));
+            services.AddScoped<IPhotoAccessor, PhotoAccessor>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
