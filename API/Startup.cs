@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using System.Text;
 using API.Middleware;
 using Application.Activities;
@@ -23,6 +24,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using AutoMapper;
 using Infrastructure.Photos;
+using SignalRChat.Hubs;
 
 namespace API
 {
@@ -54,7 +56,8 @@ namespace API
             {
                 options.AddPolicy("CorsPolicy", policy =>
                 {
-                    policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:3000");
+                    policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:3000")
+                    .AllowCredentials();
                 });
             });
 
@@ -62,6 +65,9 @@ namespace API
 
             // Add AutoMapper here
             services.AddAutoMapper(typeof(List.Handler));
+
+            // Add SignalR
+            services.AddSignalR();
 
             // Inject Fluent Validation Here
             services
@@ -111,6 +117,19 @@ namespace API
                     ValidateAudience = false,
                     ValidateIssuer = false
                 };
+                option.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        var accessToken = context.Request.Query["access_token"];
+                        var path = context.HttpContext.Request.Path;
+                        if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/chathub"))
+                        {
+                            context.Token = accessToken;
+                        }
+                        return Task.CompletedTask;
+                    }
+                };
             });
 
             services.AddScoped<IJwtGenerator, JwtGenerator>();  // Inject JwtGenerator, Added it as a service, will have access to lists and methods inside its
@@ -143,6 +162,8 @@ namespace API
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                // Configure SignalR
+                endpoints.MapHub<ChatHub>("/chathub");
             });
         }
     }

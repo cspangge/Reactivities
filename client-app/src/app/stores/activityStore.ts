@@ -6,6 +6,11 @@ import { SyntheticEvent } from "react";
 import agent from "../api/agent";
 import { history } from "../..";
 import { toast } from "react-toastify";
+import {
+  HubConnection,
+  HubConnectionBuilder,
+  LogLevel,
+} from "@microsoft/signalr";
 
 export default class ActivityStore {
   rootStore: RootStore;
@@ -20,6 +25,58 @@ export default class ActivityStore {
   @observable submitting = false;
   @observable target = "";
   @observable loading = false;
+  @observable.ref hubConnection: HubConnection | null = null; // Configure SignalR
+
+  // Create Configure SignalR Hub Connection
+  @action createHubConnection = (activityId: string) => {
+    this.hubConnection = new HubConnectionBuilder()
+      .withUrl("http://localhost:5000/chatHub", {
+        accessTokenFactory: () => this.rootStore.commonStore.token!,
+      })
+      .configureLogging(LogLevel.Information)
+      .build();
+    this.hubConnection
+      .start()
+      .then(() => console.log(this.hubConnection!.state))
+      .then(() => {
+        if (this.hubConnection!.state === "Connected") {
+          console.log("Attempting to join group");
+          this.hubConnection!.invoke("AddToGroup", activityId);
+        }
+      })
+      .catch((error) => console.log(error));
+    // await Clients.All.SendAsync("ReceiveComment", comment);
+    this.hubConnection.on("ReceiveComment", (comment) => {
+      runInAction(() => {
+        this.activity!.comments.push(comment);
+      });
+    });
+
+    this.hubConnection.on("Send", (message) => {
+      toast.info(message);
+    });
+  };
+
+  @action stopHubConnection = () => {
+    this.hubConnection!.invoke("RemoveFromGroup", this.activity!.id)
+      .then(() => {
+        this.hubConnection!.stop();
+      })
+      .then(() => {
+        console.log("Connection stopped");
+      })
+      .catch((error) => console.log(error));
+  };
+
+  @action addComment = async (values: any) => {
+    values.activityId = this.activity!.id;
+    try {
+      // public async Task SendComment(Create.Command command)
+      await this.hubConnection!.invoke("SendComment", values);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   @computed get activitiesByDate() {
     // return this.activities.sort(
@@ -115,6 +172,7 @@ export default class ActivityStore {
       attendees.push(attendee);
       activity.attendees = attendees;
       activity.isHost = true;
+      activity.comments = [];
       // this.activities.push(activity);
       runInAction("Data Created Successful", () => {
         this.activityRegistry.set(activity.id, activity);
