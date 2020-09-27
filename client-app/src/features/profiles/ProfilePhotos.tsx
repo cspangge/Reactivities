@@ -54,28 +54,28 @@ const ProfilePhotos = () => {
                     {isCurrentUser && (
                       <Button.Group fluid widths={2}>
                         <Button
-                          name={photo.id}
-                          basic
-                          positive
-                          content="Main"
-                          loading={loading && target === photo.id}
                           onClick={(e) => {
                             setMainPhoto(photo);
                             setTarget(e.currentTarget.name);
                           }}
+                          name={photo.id}
                           disabled={photo.isMain}
+                          loading={loading && target === photo.id}
+                          basic
+                          positive
+                          content="Main"
                         />
                         <Button
                           name={photo.id}
-                          basic
-                          negative
-                          icon="trash"
                           disabled={photo.isMain}
                           onClick={(e) => {
                             deletePhoto(photo);
                             setDeleteTarget(e.currentTarget.name);
                           }}
                           loading={loading && deleteTarget === photo.id}
+                          basic
+                          negative
+                          icon="trash"
                         />
                       </Button.Group>
                     )}

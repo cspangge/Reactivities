@@ -59,17 +59,18 @@ axios.interceptors.request.use(
 const responseBody = (response: AxiosResponse) =>
   response ? response.data : "";
 
-// const waitingTime = 2000;
+const waitingTime = 3000;
 
-// const sleep = (ms: number) => (response: AxiosResponse) =>
-//   new Promise<AxiosResponse>((resolve) =>
-//     setTimeout(() => resolve(response), ms)
-//   );
+const sleep = (ms: number) => (response: AxiosResponse) =>
+  new Promise<AxiosResponse>((resolve) =>
+    setTimeout(() => resolve(response), ms)
+  );
 // .then(sleep(waitingTime))
 
 const requests = {
   get: (url: string) => axios.get(url).then(responseBody),
-  post: (url: string, body: {}) => axios.post(url, body).then(responseBody),
+  post: (url: string, body: {}) =>
+    axios.post(url, body).then(sleep(waitingTime)).then(responseBody),
   put: (url: string, body: {}) => axios.put(url, body).then(responseBody),
   delete: (url: string) => axios.delete(url).then(responseBody),
   postForm: (url: string, file: Blob) => {
@@ -105,6 +106,8 @@ const User = {
 const Profiles = {
   get: (username: string): Promise<IProfile> =>
     requests.get(`/profiles/${username}`),
+  update: (profile: IProfile): Promise<IProfile> =>
+    requests.put(`/profiles`, profile),
   uploadPhoto: (photo: Blob): Promise<IPhoto> =>
     requests.postForm(`/photos`, photo),
   deletePhoto: (id: string) => requests.delete(`/photos/${id}`),

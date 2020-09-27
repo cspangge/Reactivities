@@ -16,7 +16,7 @@ const PhotoWidgetCropper: React.FC<IProps> = ({ setImage, imagePreview }) => {
       return;
     cropperRef &&
       cropperRef.current &&
-      cropper.getCroppedCanvas().toBlob((blob: any) => {
+      cropper.getCroppedCanvas({ fillColor: "#ffffff" }).toBlob((blob: any) => {
         setImage(blob);
       }, "image/jpeg");
   };
@@ -24,7 +24,7 @@ const PhotoWidgetCropper: React.FC<IProps> = ({ setImage, imagePreview }) => {
   return (
     <Cropper
       src={imagePreview}
-      style={{ height: 200, width: "100%" }}
+      style={{ height: 300, width: "100%" }}
       // Cropper.js options
       aspectRatio={1 / 1} // Define the fixed aspect ratio of the crop box. By default, the crop box is free ratio.
       preview=".img-preview" // Add extra elements (containers) for preview.
@@ -34,15 +34,15 @@ const PhotoWidgetCropper: React.FC<IProps> = ({ setImage, imagePreview }) => {
       ref={cropperRef}
       dragMode="move" // Define the dragging mode of the cropper.
       scalable={true} // Enable to scale the image.
-      zoomable={true} // Enable to zoom the image.
-      rotatable={true} // Enable to rotate the image.
-      zoomOnWheel={true} // Enable to zoom the image by wheeling mouse.
+      // zoomable={true} // Enable to zoom the image.
+      // rotatable={true} // Enable to rotate the image.
+      // zoomOnWheel={true} // Enable to zoom the image by wheeling mouse.
       cropBoxMovable={true} // Enable to move the crop box by dragging.
       cropBoxResizable={true} // Enable to resize the crop box by dragging.
-      responsive={true} // Re-render the cropper when resizing the window.
-      restore={true} // Restore the cropped area after resizing the window.
-      center={true} // Show the center indicator above the crop box.
-      background={true} // Show the grid background of the container.
+      // responsive={true} // Re-render the cropper when resizing the window.
+      // restore={true} // Restore the cropped area after resizing the window.
+      // center={true} // Show the center indicator above the crop box.
+      // background={false} // Show the grid background of the container.
     />
   );
 };

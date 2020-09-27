@@ -25,46 +25,66 @@ export const PhotoUploadWidget: React.FC<IProps> = ({
   return (
     <Fragment>
       <Grid>
-        <Grid.Column width={4}>
-          <Header color="teal" sub content="Step 1 - Add Photo" />
-          <PhotoWidgetDropzone setFiles={setFiles} />
-        </Grid.Column>
-        <Grid.Column width={1} />
-        <Grid.Column width={4}>
-          <Header sub color="teal" content="Step 2 - Resize image" />
-          {files.length > 0 && (
-            <PhotoWidgetCropper
-              setImage={setImage}
-              imagePreview={files[0].preview}
-            />
-          )}
-        </Grid.Column>
-        <Grid.Column width={1} />
-        <Grid.Column width={4}>
-          <Header sub color="teal" content="Step 3 - Preview & Upload" />
-          {files.length > 0 && (
+        <Grid.Column width={16}>
+          {files.length === 0 && (
             <Fragment>
-              <div
-                className="img-preview"
-                style={{ minHeight: "200px", overflow: "hidden" }}
-              />
-              <Button.Group fluid widths={2}>
-                <Button
-                  positive
-                  icon="check"
-                  loading={uploadingPhoto}
-                  onClick={() => uploadPhoto(image!)}
-                />
-                <Button
-                  icon="close"
-                  disabled={uploadingPhoto}
-                  onClick={() => setFiles([]!)}
-                />
-              </Button.Group>
+              <Header color="teal" sub content="Step 1 - Add Photo" />
+              <PhotoWidgetDropzone setFiles={setFiles} />
             </Fragment>
           )}
         </Grid.Column>
       </Grid>
+      <Grid>
+        <Grid.Column width={8}>
+          {files.length > 0 && (
+            <Fragment>
+              <Header sub color="teal" content="Step 2 - Resize image" />
+              <PhotoWidgetCropper
+                setImage={setImage}
+                imagePreview={files[0].preview}
+              />
+            </Fragment>
+          )}
+        </Grid.Column>
+        <Grid.Column width={8}>
+          {files.length > 0 && (
+            <Fragment>
+              <Header sub color="teal" content="Step 3 - Preview & Upload" />
+              <div
+                className="img-preview"
+                style={{
+                  minHeight: "300px",
+                  overflow: "hidden",
+                  border: "1px solid #000000",
+                  borderRadius: "300px",
+                }}
+              />
+            </Fragment>
+          )}
+        </Grid.Column>
+      </Grid>
+      {files.length > 0 && (
+        <Grid>
+          <Grid.Column width={4} />
+          <Grid.Column width={8}>
+            <Button.Group fluid widths={2}>
+              <Button
+                positive
+                icon="check"
+                loading={uploadingPhoto}
+                content="Submit"
+                onClick={() => uploadPhoto(image!)}
+              />
+              <Button
+                icon="close"
+                disabled={uploadingPhoto}
+                content="Cancel"
+                onClick={() => setFiles([]!)}
+              />
+            </Button.Group>
+          </Grid.Column>
+        </Grid>
+      )}
     </Fragment>
   );
 };

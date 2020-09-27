@@ -15,12 +15,25 @@ export default class ProfileStore {
   @observable loadingProfile = true;
   @observable uploadingPhoto = false;
   @observable loading = false;
+  @observable submitting = false;
 
   @computed get isCurrentUser() {
     if (this.rootStore.userStore.user && this.profile) {
       return this.rootStore.userStore.user.username === this.profile.username;
     } else {
       return false;
+    }
+  }
+
+  @computed get getProfile() {
+    if (this.rootStore.userStore.user && this.profile) {
+      if (this.rootStore.userStore.user.username === this.profile.username) {
+        return this.profile;
+      } else {
+        return null;
+      }
+    } else {
+      return null;
     }
   }
 
@@ -99,6 +112,37 @@ export default class ProfileStore {
         this.loading = false;
       });
       toast.error("Problem deleting photo");
+    }
+  };
+
+  @action editProfile = async (profile: IProfile) => {
+    this.submitting = true;
+
+    setTimeout(() => {
+      runInAction(() => {
+        this.submitting = false;
+      });
+    });
+
+    try {
+      await agent.Profiles.update(profile);
+      // console.log(profile.bio);
+      // console.log(profile.displayName);
+      // console.log(profile.username);
+      // console.log(profile.image);
+      setTimeout(() => {
+        runInAction(() => {
+          this.profile!.displayName = profile.displayName;
+          this.profile!.bio = profile.bio;
+          this.submitting = false;
+        });
+      }, 10000);
+    } catch (error) {
+      console.log(error);
+      runInAction(() => {
+        this.submitting = false;
+      });
+      toast.error("Problem editing profile");
     }
   };
 }

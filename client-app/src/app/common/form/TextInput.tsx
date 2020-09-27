@@ -11,10 +11,11 @@ const TextInput: React.FC<IProps> = ({
   type,
   placeholder,
   meta: { touched, error },
+  readOnly = false,
 }) => {
   return (
     <Form.Field error={touched && !!error} type={type} width={width}>
-      <input {...input} placeholder={placeholder} />
+      <input {...input} placeholder={placeholder} readOnly={readOnly} />
       {touched && error && (
         <Label basic color="red">
           {error}
