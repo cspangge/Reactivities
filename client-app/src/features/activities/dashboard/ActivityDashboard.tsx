@@ -1,19 +1,36 @@
 import { observer } from "mobx-react-lite";
-import React, { useContext, useEffect } from "react";
-import { Grid } from "semantic-ui-react";
+import React, { useContext, useEffect, useState } from "react";
+import { Grid, Loader } from "semantic-ui-react";
 import ActivityList from "./ActivityList";
 import LoadingComponent from "../../../app/layout/LoadingComponent";
 import { RootStoreContext } from "../../../app/stores/rootStore";
+import InfiniteScroll from "react-infinite-scroller";
+import ActivityFilters from "./ActivityFilters";
 
 const ActivityDashboard: React.FC = () => {
   const rootStore = useContext(RootStoreContext);
-  const { loadActivities, loadingInitial } = rootStore.activityStore;
+  const {
+    loadActivities,
+    loadingInitial,
+    setPage,
+    page,
+    totalPages,
+  } = rootStore.activityStore;
+  const [loadingNext, setLoadingNext] = useState(false);
+
+  const handleGetNext = () => {
+    setLoadingNext(true);
+    setPage(page + 1);
+    loadActivities().then(() => {
+      setLoadingNext(false);
+    });
+  };
 
   useEffect(() => {
     loadActivities();
   }, [loadActivities]);
 
-  if (loadingInitial)
+  if (loadingInitial && page === 0)
     return <LoadingComponent content="Loading Data..." size="massive" />;
   // [] ensure useEffect runs one time only, and doesn't continuously
   // run because every time our component renders then this use affects
@@ -30,7 +47,36 @@ const ActivityDashboard: React.FC = () => {
   return (
     <Grid>
       <Grid.Column width={10}>
-        <ActivityList />
+        <InfiniteScroll
+          pageStart={0}
+          initialLoad={false}
+          loadMore={handleGetNext}
+          hasMore={!loadingNext && page + 1 < totalPages}
+          loader={
+            <div className="loader" key={0}>
+              Loading ...
+            </div>
+          }
+        >
+          <ActivityList />
+        </InfiniteScroll>
+
+        {/* {true && (
+          <Button
+            floated="right"
+            content="More..."
+            positive
+            disabled={totalPages === page + 1}
+            onClick={handleGetNext}
+            loading={loadingNext}
+          />
+        )} */}
+      </Grid.Column>
+      <Grid.Column width={6}>
+        <ActivityFilters />
+      </Grid.Column>
+      <Grid.Column width={10}>
+        <Loader active={loadingNext} size="large" />
       </Grid.Column>
     </Grid>
   );

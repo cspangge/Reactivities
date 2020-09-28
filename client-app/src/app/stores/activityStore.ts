@@ -1,7 +1,7 @@
 import { createAttendee, setActivityProps } from "./../common/util/util";
 import { RootStore } from "./rootStore";
 import { IActivity } from "../model/activity";
-import { observable, action, computed, runInAction } from "mobx";
+import { observable, action, computed, runInAction, reaction } from "mobx";
 import { SyntheticEvent } from "react";
 import agent from "../api/agent";
 import { history } from "../..";
@@ -16,6 +16,15 @@ export default class ActivityStore {
   rootStore: RootStore;
   constructor(rootStore: RootStore) {
     this.rootStore = rootStore;
+
+    reaction(
+      () => this.predicate.keys(),
+      () => {
+        this.page = 0;
+        this.activityRegistry.clear();
+        this.loadActivities();
+      }
+    );
   }
 
   @observable activityRegistry = new Map();
@@ -26,6 +35,37 @@ export default class ActivityStore {
   @observable target = "";
   @observable loading = false;
   @observable.ref hubConnection: HubConnection | null = null; // Configure SignalR
+  @observable activityCount = 0;
+  @observable page = 0;
+  @observable itemPerPage = 3;
+  @observable predicate = new Map();
+
+  @action setPredicate = (predicate: string, value: string | Date) => {
+    this.predicate.clear();
+
+    if (predicate !== "all") {
+      this.predicate.set(predicate, value);
+    }
+  };
+
+  @computed get axiosParams() {
+    const params = new URLSearchParams();
+    params.append("limit", this.itemPerPage.toString());
+    params.append("offset", `${this.page ? this.page * this.itemPerPage : 0}`);
+    this.predicate.forEach((v, k) => {
+      if (k === "startDate") params.append(k, v.toISOString());
+      else params.append(k, v);
+    });
+    return params;
+  }
+
+  @computed get totalPages() {
+    return Math.ceil(this.activityCount / this.itemPerPage);
+  }
+
+  @action setPage = (page: number) => {
+    this.page = page;
+  };
 
   // Create Configure SignalR Hub Connection
   @action createHubConnection = (activityId: string) => {
@@ -110,13 +150,15 @@ export default class ActivityStore {
     this.loadingInitial = true;
     const user = this.rootStore.userStore.user!;
     try {
-      const activities = await agent.Activities.list();
+      const activityEnvelope = await agent.Activities.list(this.axiosParams);
+      const { activities, activityCount } = activityEnvelope;
       runInAction("Data Loaded Successful", () => {
-        activities.forEach((activity) => {
+        activities.forEach((activity: IActivity) => {
           setActivityProps(activity, user);
           // this.activities.push(activity);
           this.activityRegistry.set(activity.id, activity);
         });
+        this.activityCount = activityCount;
         this.loadingInitial = false;
       });
     } catch (error) {

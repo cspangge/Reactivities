@@ -19,9 +19,11 @@ namespace API.Controllers
         //     return await _mediator.Send(new List.Query(), cancellationToken);
         // }
         // ---> End Here
-        public async Task<ActionResult<List<ActivityDto>>> List()
+        public async Task<ActionResult<List.ActivitiesEnvelope>> List(int? limit, int? offset, bool isGoing, bool isHost, DateTime? startDate)
         {
-            return await Mediator.Send(new List.Query());
+            // Console.WriteLine("1----->" + startDate);
+            limit = limit == 0 ? 1 : limit;
+            return await Mediator.Send(new List.Query(limit, offset, isGoing, isHost, startDate));
         }
 
         [HttpGet("{id}")]

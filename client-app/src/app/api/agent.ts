@@ -3,7 +3,7 @@ import { IUserFormValues } from "./../model/user";
 import { toast } from "react-toastify";
 import { history } from "./../../index";
 import axios, { AxiosResponse } from "axios";
-import { IActivity } from "../model/activity";
+import { IActivitiesEnvelope, IActivity } from "../model/activity";
 import { IUser } from "../model/user";
 
 axios.defaults.baseURL = "http://localhost:5000/api";
@@ -89,7 +89,15 @@ const requests = {
 };
 
 const Activities = {
-  list: (): Promise<IActivity[]> => requests.get("/activities"),
+  list: (params: URLSearchParams): Promise<IActivitiesEnvelope> => {
+    // params.forEach((v, k) => {
+    //   console.log(k + " --- " + v);
+    // });
+    return axios
+      .get("/activities", { params: params })
+      .then(sleep(waitingTime))
+      .then(responseBody);
+  },
   details: (id: string) => requests.get(`/activities/${id}`),
   create: (activity: IActivity) => requests.post("/activities", activity),
   update: (activity: IActivity) =>
@@ -122,6 +130,8 @@ const Profiles = {
     requests.delete(`/profiles/${username}/unfollow`),
   listFollowings: (username: string, predicate: string) =>
     requests.get(`/profiles/${username}/follow?predicate=${predicate}`),
+  listActivities: (username: string, predicate: string) =>
+    requests.get(`/profiles/${username}/activities?predicate=${predicate}`),
 };
 
 export default {
