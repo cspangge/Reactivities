@@ -68,11 +68,14 @@ const sleep = (ms: number) => (response: AxiosResponse) =>
 // .then(sleep(waitingTime))
 
 const requests = {
-  get: (url: string) => axios.get(url).then(responseBody),
+  get: (url: string) =>
+    axios.get(url).then(sleep(waitingTime)).then(responseBody),
   post: (url: string, body: {}) =>
     axios.post(url, body).then(sleep(waitingTime)).then(responseBody),
-  put: (url: string, body: {}) => axios.put(url, body).then(responseBody),
-  delete: (url: string) => axios.delete(url).then(responseBody),
+  put: (url: string, body: {}) =>
+    axios.put(url, body).then(sleep(waitingTime)).then(responseBody),
+  delete: (url: string) =>
+    axios.delete(url).then(sleep(waitingTime)).then(responseBody),
   postForm: (url: string, file: Blob) => {
     let formData = new FormData();
     formData.append("File", file);
@@ -80,6 +83,7 @@ const requests = {
       .post(url, formData, {
         headers: { "Content-type": "multipart/form-data" },
       })
+      .then(sleep(waitingTime))
       .then(responseBody);
   },
 };
@@ -112,6 +116,12 @@ const Profiles = {
     requests.postForm(`/photos`, photo),
   deletePhoto: (id: string) => requests.delete(`/photos/${id}`),
   setMainPhoto: (id: string) => requests.post(`/photos/${id}/setmain`, {}),
+  follow: (username: string) =>
+    requests.post(`/profiles/${username}/follow`, {}),
+  unfollow: (username: string) =>
+    requests.delete(`/profiles/${username}/unfollow`),
+  listFollowings: (username: string, predicate: string) =>
+    requests.get(`/profiles/${username}/follow?predicate=${predicate}`),
 };
 
 export default {

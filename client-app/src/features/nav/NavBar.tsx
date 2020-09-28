@@ -1,3 +1,4 @@
+import { observer } from "mobx-react-lite";
 import React, { Fragment, useContext } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { Button, Container, Dropdown, Menu, Image } from "semantic-ui-react";
@@ -54,4 +55,4 @@ const NavBar: React.FC = () => {
   );
 };
 
-export default NavBar;
+export default observer(NavBar);

@@ -25,6 +25,7 @@ using Microsoft.AspNetCore.Mvc.Authorization;
 using AutoMapper;
 using Infrastructure.Photos;
 using SignalRChat.Hubs;
+using Application.Profiles;
 
 namespace API
 {
@@ -138,6 +139,9 @@ namespace API
             // Add Cloudinary Here to support image and video api management
             services.Configure<CloudinarySettings>(Configuration.GetSection("Cloudinary"));
             services.AddScoped<IPhotoAccessor, PhotoAccessor>();
+
+            // Profile
+            services.AddScoped<IProfileReader, ProfileReader>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
