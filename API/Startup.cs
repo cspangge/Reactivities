@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using System.Text;
 using API.Middleware;
@@ -57,8 +58,12 @@ namespace API
             {
                 options.AddPolicy("CorsPolicy", policy =>
                 {
-                    policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:3000")
-                    .AllowCredentials();
+                    policy
+                        .AllowAnyHeader()
+                        .AllowAnyMethod()
+                        // .WithExposedHeaders("WWW-Authenticate")
+                        .WithOrigins("http://localhost:3000")
+                        .AllowCredentials();
                 });
             });
 
@@ -100,7 +105,7 @@ namespace API
             {
                 options.AddPolicy("IsActivityHost", policy =>
                 {
-                    policy.Requirements.Add(new IsHostRequirement());   // Add policy here
+                    policy.Requirements.Add(new IsHostRequirement());
                 });
             });
             // Add authorization handler
@@ -116,7 +121,9 @@ namespace API
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = key,
                     ValidateAudience = false,
-                    ValidateIssuer = false
+                    ValidateIssuer = false,
+                    ValidateLifetime = true,
+                    ClockSkew = TimeSpan.Zero   // When token expired after {} minutes, will get unauthorized
                 };
                 option.Events = new JwtBearerEvents
                 {
@@ -152,6 +159,11 @@ namespace API
             if (env.IsDevelopment())
             {
                 // app.UseDeveloperExceptionPage();
+            }
+            else
+            {
+                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+                app.UseHsts();
             }
 
             // app.UseHttpsRedirection();

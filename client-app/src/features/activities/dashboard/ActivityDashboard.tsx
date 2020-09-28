@@ -2,10 +2,11 @@ import { observer } from "mobx-react-lite";
 import React, { useContext, useEffect, useState } from "react";
 import { Grid, Loader } from "semantic-ui-react";
 import ActivityList from "./ActivityList";
-import LoadingComponent from "../../../app/layout/LoadingComponent";
+// import LoadingComponent from "../../../app/layout/LoadingComponent";
 import { RootStoreContext } from "../../../app/stores/rootStore";
 import InfiniteScroll from "react-infinite-scroller";
 import ActivityFilters from "./ActivityFilters";
+import ActivityListItemPlaceholder from "./ActivityListItemPlaceHolder";
 
 const ActivityDashboard: React.FC = () => {
   const rootStore = useContext(RootStoreContext);
@@ -30,8 +31,8 @@ const ActivityDashboard: React.FC = () => {
     loadActivities();
   }, [loadActivities]);
 
-  if (loadingInitial && page === 0)
-    return <LoadingComponent content="Loading Data..." size="massive" />;
+  // if (loadingInitial && page === 0)
+  //   return <LoadingComponent content="Loading Data..." size="massive" />;
   // [] ensure useEffect runs one time only, and doesn't continuously
   // run because every time our component renders then this use affects
   // method would be called and it's only by adding. the second parameter
@@ -47,20 +48,23 @@ const ActivityDashboard: React.FC = () => {
   return (
     <Grid>
       <Grid.Column width={10}>
-        <InfiniteScroll
-          pageStart={0}
-          initialLoad={false}
-          loadMore={handleGetNext}
-          hasMore={!loadingNext && page + 1 < totalPages}
-          loader={
-            <div className="loader" key={0}>
-              Loading ...
-            </div>
-          }
-        >
-          <ActivityList />
-        </InfiniteScroll>
-
+        {loadingInitial && page === 0 ? (
+          <ActivityListItemPlaceholder />
+        ) : (
+          <InfiniteScroll
+            pageStart={0}
+            initialLoad={false}
+            loadMore={handleGetNext}
+            hasMore={!loadingNext && page + 1 < totalPages}
+            loader={
+              <div className="loader" key={0}>
+                Loading ...
+              </div>
+            }
+          >
+            <ActivityList />
+          </InfiniteScroll>
+        )}
         {/* {true && (
           <Button
             floated="right"

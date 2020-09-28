@@ -23,8 +23,13 @@ axios.interceptors.response.use(undefined, (error) => {
   if (error.message === "Network Error" && !error.response) {
     toast.error("Network error!!!");
   } else {
-    const { status, data, config } = error.response;
+    const { status, data, config, headers } = error.response;
     switch (status) {
+      case 401:
+        window.localStorage.removeItem("jwt");
+        history.push("/");
+        toast.info("Session expired, please login again");
+        break;
       case 404: // Content not found
         history.push("/notfound");
         break;
