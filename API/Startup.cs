@@ -108,6 +108,7 @@ namespace API
                     policy.Requirements.Add(new IsHostRequirement());
                 });
             });
+            services.AddHttpContextAccessor();
             // Add authorization handler
             services.AddTransient<IAuthorizationHandler, IsHostRequirementHandler>();
 
