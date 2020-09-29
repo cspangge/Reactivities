@@ -8,9 +8,20 @@ export const combineDateAndTime = (date: Date, time: Date) => {
   // const day = date.getDate();
   // const dateString = `${year}-${month}-${day}`;
 
-  const dateString = date.toISOString().split("T")[0];
-  const timeString = date.toISOString().split("T")[1];
+  time = new Date(
+    date.getFullYear(),
+    date.getMonth(),
+    date.getDate(),
+    time.getHours(),
+    time.getMinutes(),
+    time.getSeconds()
+  );
+  // console.log(time.toString());
+  // console.log(time.toLocaleString());
 
+  const dateString = time.toISOString().split("T")[0];
+  const timeString = time.toISOString().split("T")[1];
+  // console.log("New Date: " + dateString + "T" + timeString);
   return new Date(dateString + "T" + timeString);
 };
 

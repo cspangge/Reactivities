@@ -39,8 +39,7 @@ namespace API
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+        public void ConfigureDevelopmentServices(IServiceCollection services)
         {
             services.AddDbContext<DataContext>(options =>
             {
@@ -53,6 +52,41 @@ namespace API
                     opts.MaxBatchSize(100);
                 });
             });
+
+            ConfigureServices(services);
+        }
+        public void ConfigureProductionServices(IServiceCollection services)
+        {
+            services.AddDbContext<DataContext>(options =>
+            {
+                // Add Lazy Loading Here
+                options.UseLazyLoadingProxies();
+                options.EnableSensitiveDataLogging(true);
+                options.UseSqlite(Configuration.GetConnectionString("DefaultConnection"), opts =>
+                {
+                    //指定单次批量插入最大数量
+                    opts.MaxBatchSize(100);
+                });
+            });
+
+            ConfigureServices(services);
+        }
+
+        // This method gets called by the runtime. Use this method to add services to the container.
+        public void ConfigureServices(IServiceCollection services)
+        {
+
+            // services.AddDbContext<DataContext>(options =>
+            // {
+            //     // Add Lazy Loading Here
+            //     options.UseLazyLoadingProxies();
+            //     options.EnableSensitiveDataLogging(true);
+            //     options.UseSqlite(Configuration.GetConnectionString("DefaultConnection"), opts =>
+            //     {
+            //         //指定单次批量插入最大数量
+            //         opts.MaxBatchSize(100);
+            //     });
+            // });
 
             services.AddCors(options =>
             {
@@ -169,6 +203,9 @@ namespace API
 
             // app.UseHttpsRedirection();
 
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
+
             app.UseRouting();
 
             app.UseCors("CorsPolicy");
@@ -181,6 +218,9 @@ namespace API
                 endpoints.MapControllers();
                 // Configure SignalR
                 endpoints.MapHub<ChatHub>("/chathub");
+
+                // Fallback to Frontend Route
+                endpoints.MapFallbackToController("Index", "Fallback");
             });
         }
     }

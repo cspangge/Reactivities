@@ -1,7 +1,14 @@
 import { createAttendee, setActivityProps } from "./../common/util/util";
 import { RootStore } from "./rootStore";
 import { IActivity } from "../model/activity";
-import { observable, action, computed, runInAction, reaction } from "mobx";
+import {
+  observable,
+  action,
+  computed,
+  runInAction,
+  reaction,
+  toJS,
+} from "mobx";
 import { SyntheticEvent } from "react";
 import agent from "../api/agent";
 import { history } from "../..";
@@ -42,7 +49,6 @@ export default class ActivityStore {
 
   @action setPredicate = (predicate: string, value: string | Date) => {
     this.predicate.clear();
-
     if (predicate !== "all") {
       this.predicate.set(predicate, value);
     }
@@ -70,7 +76,7 @@ export default class ActivityStore {
   // Create Configure SignalR Hub Connection
   @action createHubConnection = (activityId: string) => {
     this.hubConnection = new HubConnectionBuilder()
-      .withUrl("http://localhost:5000/chatHub", {
+      .withUrl(process.env.REACT_APP_API_CHAT_URL!, {
         accessTokenFactory: () => this.rootStore.commonStore.token!,
       })
       .configureLogging(LogLevel.Information)
@@ -93,7 +99,7 @@ export default class ActivityStore {
     });
 
     this.hubConnection.on("Send", (message) => {
-      toast.info(message);
+      // toast.info(message);
     });
   };
 
@@ -132,7 +138,7 @@ export default class ActivityStore {
 
   groupActivitiesByDate(activities: IActivity[]) {
     const sortedActivities = activities.sort(
-      (b, a) => a.date.getTime() - b.date.getTime()
+      (a, b) => a.date.getTime() - b.date.getTime()
     );
     return Object.entries(
       sortedActivities.reduce((activities, activity) => {
@@ -148,13 +154,12 @@ export default class ActivityStore {
 
   @action loadActivities = async () => {
     this.loadingInitial = true;
-    const user = this.rootStore.userStore.user!;
     try {
       const activityEnvelope = await agent.Activities.list(this.axiosParams);
       const { activities, activityCount } = activityEnvelope;
       runInAction("Data Loaded Successful", () => {
         activities.forEach((activity: IActivity) => {
-          setActivityProps(activity, user);
+          setActivityProps(activity, this.rootStore.userStore.user!);
           // this.activities.push(activity);
           this.activityRegistry.set(activity.id, activity);
         });
@@ -170,17 +175,16 @@ export default class ActivityStore {
   };
 
   @action loadActivity = async (id: string) => {
-    const user = this.rootStore.userStore.user!;
     let activity = this.getActivity(id);
     if (activity) {
       this.activity = activity;
-      return activity;
+      return toJS(activity);
     } else {
       this.loadingInitial = true;
       try {
         activity = await agent.Activities.details(id);
         runInAction("Data Loaded Successful", () => {
-          setActivityProps(activity, user);
+          setActivityProps(activity, this.rootStore.userStore.user!);
           this.activity = activity;
           this.activityRegistry.set(activity.id, activity);
           this.loadingInitial = false;

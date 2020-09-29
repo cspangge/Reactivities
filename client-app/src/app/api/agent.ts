@@ -1,12 +1,11 @@
-import { IPhoto, IProfile } from "./../model/profile";
-import { IUserFormValues } from "./../model/user";
+import { IPhoto, IProfile } from "../model/profile";
+import { IUserFormValues, IUser } from "../model/user";
 import { toast } from "react-toastify";
-import { history } from "./../../index";
+import { history } from "../../index";
 import axios, { AxiosResponse } from "axios";
 import { IActivitiesEnvelope, IActivity } from "../model/activity";
-import { IUser } from "../model/user";
 
-axios.defaults.baseURL = "http://localhost:5000/api";
+axios.defaults.baseURL = process.env.REACT_APP_API_URL;
 
 // Add error handling middleware
 axios.interceptors.response.use(undefined, (error) => {
@@ -23,7 +22,7 @@ axios.interceptors.response.use(undefined, (error) => {
   if (error.message === "Network Error" && !error.response) {
     toast.error("Network error!!!");
   } else {
-    const { status, data, config, headers } = error.response;
+    const { status, data, config } = error.response;
     switch (status) {
       case 401:
         window.localStorage.removeItem("jwt");
@@ -51,9 +50,7 @@ axios.interceptors.response.use(undefined, (error) => {
 axios.interceptors.request.use(
   (config) => {
     const token = window.localStorage.getItem("jwt");
-
     if (token) config.headers.Authorization = `Bearer ${token}`;
-
     return config;
   },
   (error) => {
@@ -61,10 +58,9 @@ axios.interceptors.request.use(
   }
 );
 
-const responseBody = (response: AxiosResponse) =>
-  response ? response.data : "";
+const responseBody = (response: AxiosResponse) => response.data;
 
-const waitingTime = 3000;
+const waitingTime = 0;
 
 const sleep = (ms: number) => (response: AxiosResponse) =>
   new Promise<AxiosResponse>((resolve) =>
@@ -98,10 +94,7 @@ const Activities = {
     // params.forEach((v, k) => {
     //   console.log(k + " --- " + v);
     // });
-    return axios
-      .get("/activities", { params: params })
-      .then(sleep(waitingTime))
-      .then(responseBody);
+    return axios.get("/activities", { params: params }).then(responseBody);
   },
   details: (id: string) => requests.get(`/activities/${id}`),
   create: (activity: IActivity) => requests.post("/activities", activity),

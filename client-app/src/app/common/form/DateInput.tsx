@@ -13,24 +13,22 @@ const DateInput: React.FC<IProps> = ({
   placeholder,
   date = false,
   time = false,
-  messages,
   meta: { touched, error },
   ...rest
 }) => {
   return (
     <Form.Field error={touched && !!error} width={width}>
       <DateTimePicker
-        messages={messages}
         placeholder={placeholder}
         value={input.value || null}
         onChange={input.onChange}
         date={date}
         time={time}
-        {...rest}
         onBlur={input.onBlur}
         onKeyDown={(e) => {
           e.preventDefault(); // Prevent input from keyboard, only select from component is available
         }}
+        {...rest}
       />
       {touched && error && (
         <Label basic color="red">
