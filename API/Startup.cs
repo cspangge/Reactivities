@@ -46,7 +46,7 @@ namespace API
                 // Add Lazy Loading Here
                 options.UseLazyLoadingProxies();
                 options.EnableSensitiveDataLogging(true);
-                options.UseSqlite(Configuration.GetConnectionString("DefaultConnection"), opts =>
+                options.UseMySql(Configuration.GetConnectionString("DefaultConnection"), opts =>
                 {
                     //指定单次批量插入最大数量
                     opts.MaxBatchSize(100);
@@ -62,7 +62,7 @@ namespace API
                 // Add Lazy Loading Here
                 options.UseLazyLoadingProxies();
                 options.EnableSensitiveDataLogging(true);
-                options.UseSqlite(Configuration.GetConnectionString("DefaultConnection"), opts =>
+                options.UseMySql(Configuration.GetConnectionString("DefaultConnection"), opts =>
                 {
                     //指定单次批量插入最大数量
                     opts.MaxBatchSize(100);

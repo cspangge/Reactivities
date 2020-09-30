@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ContentModelStore">
+    <e p="$APPLICATION_CONFIG_DIR$/consoles/db" t="IncludeRecursive" />
+    <e p="$APPLICATION_CONFIG_DIR$/extensions" t="IncludeRecursive" />
+    <e p="$USER_HOME$/Library/Caches/JetBrains/Rider2020.2/extResources" t="IncludeRecursive" />
+    <e p="$USER_HOME$/Library/Caches/JetBrains/Rider2020.2/resharper-host/local/Transient/Rider/v202/SolutionCaches/_Reactivities.2028685317.00" t="ExcludeRecursive" />
+    <e p="$PROJECT_DIR$" t="IncludeFlat">
+      <e p="API" t="IncludeRecursive">
+        <e p="API.csproj" t="IncludeRecursive" />
+        <e p="appsettings.Development.json" t="Include" />
+        <e p="appsettings.json" t="Include" />
+        <e p="bin" t="ExcludeRecursive" />
+        <e p="Controllers" t="Include">
+          <e p="ActivitiesController.cs" t="Include" />
+          <e p="BaseController.cs" t="Include" />
+          <e p="FallbackController.cs" t="Include" />
+          <e p="FollowersController.cs" t="Include" />
+          <e p="PhotosController.cs" t="Include" />
+          <e p="ProfilesController.cs" t="Include" />
+          <e p="UserController.cs" t="Include" />
+          <e p="ValuesController.cs" t="Include" />
+        </e>
+        <e p="Hubs" t="Include">
+          <e p="ChatHub.cs" t="Include" />
+        </e>
+        <e p="Middleware" t="Include">
+          <e p="ErrorHandlingMiddleware.cs" t="Include" />
+        </e>
+        <e p="obj" t="ExcludeRecursive">
+          <e p="Debug" t="Include">
+            <e p="netcoreapp3.1" t="Include">
+              <e p="API.AssemblyInfo.cs" t="Include" />
+            </e>
+          </e>
+        </e>
+        <e p="Program.cs" t="Include" />
+        <e p="Properties" t="Include">
+          <e p="launchSettings.json" t="Include" />
+        </e>
+        <e p="reactivities.db" t="Include" />
+        <e p="Startup.cs" t="Include" />
+        <e p="wwwroot" t="Include">
+          <e p="asset-manifest.json" t="Include" />
+          <e p="assets" t="Include">
+            <e p="img" t="Include">
+              <e p="categoryImages" t="Include">
+                <e p="culture.jpg" t="Include" />
+                <e p="drinks.jpg" t="Include" />
+                <e p="film.jpg" t="Include" />
+                <e p="food.jpg" t="Include" />
+                <e p="music.jpg" t="Include" />
+                <e p="travel.jpg" t="Include" />
+              </e>
+              <e p="logo.png" t="Include" />
+              <e p="placeholder.png" t="Include" />
+              <e p="user.png" t="Include" />
+            </e>
+          </e>
+          <e p="favicon.ico" t="Include" />
+          <e p="index.html" t="Include" />
+          <e p="logo192.png" t="Include" />
+          <e p="logo512.png" t="Include" />
+          <e p="manifest.json" t="Include" />
+          <e p="precache-manifest.5b7bc3418f0d44ed78b2fc44bf2d0ec2.js" t="Include" />
+          <e p="robots.txt" t="Include" />
+          <e p="service-worker.js" t="Include" />
+          <e p="static" t="Include">
+            <e p="css" t="Include">
+              <e p="2.9c83a34d.chunk.css" t="Include" />
+              <e p="2.9c83a34d.chunk.css.map" t="Include" />
+              <e p="main.b9c1ce47.chunk.css" t="Include" />
+              <e p="main.b9c1ce47.chunk.css.map" t="Include" />
+            </e>
+            <e p="js" t="Include">
+              <e p="2.d68d7791.chunk.js" t="Include" />
+              <e p="2.d68d7791.chunk.js.LICENSE.txt" t="Include" />
+              <e p="2.d68d7791.chunk.js.map" t="Include" />
+              <e p="main.0a0837e0.chunk.js" t="Include" />
+              <e p="main.0a0837e0.chunk.js.map" t="Include" />
+              <e p="runtime-main.62e09ec8.js" t="Include" />
+              <e p="runtime-main.62e09ec8.js.map" t="Include" />
+            </e>
+            <e p="media" t="Include">
+              <e p="brand-icons.13db00b7.eot" t="Include" />
+              <e p="brand-icons.a046592b.woff" t="Include" />
+              <e p="brand-icons.a1a749e8.svg" t="Include" />
+              <e p="brand-icons.c5ebe0b3.ttf" t="Include" />
+              <e p="brand-icons.e8c322de.woff2" t="Include" />
+              <e p="flags.9c74e172.png" t="Include" />
+              <e p="icons.0ab54153.woff2" t="Include" />
+              <e p="icons.8e3c7f55.eot" t="Include" />
+              <e p="icons.962a1bf3.svg" t="Include" />
+              <e p="icons.b87b9ba5.ttf" t="Include" />
+              <e p="icons.faff9214.woff" t="Include" />
+              <e p="loader-big.a770b679.gif" t="Include" />
+              <e p="outline-icons.701ae6ab.eot" t="Include" />
+              <e p="outline-icons.82f60bd0.svg" t="Include" />
+              <e p="outline-icons.ad97afd3.ttf" t="Include" />
+              <e p="outline-icons.cd6c777f.woff2" t="Include" />
+              <e p="outline-icons.ef60a4f6.woff" t="Include" />
+              <e p="rw-widgets.12f0820c.woff" t="Include" />
+              <e p="rw-widgets.792dcd18.svg" t="Include" />
+              <e p="rw-widgets.bc7c4a59.eot" t="Include" />
+              <e p="rw-widgets.eceddf47.ttf" t="Include" />
+            </e>
+          </e>
+        </e>
+      </e>
+      <e p="Application" t="IncludeRecursive">
+        <e p="Activities" t="Include">
+          <e p="ActivityDto.cs" t="Include" />
+          <e p="Attend.cs" t="Include" />
+          <e p="AttendeeDto.cs" t="Include" />
+          <e p="Create.cs" t="Include" />
+          <e p="Delete.cs" t="Include" />
+          <e p="Details.cs" t="Include" />
+          <e p="Edit.cs" t="Include" />
+          <e p="FollowingResolver.cs" t="Include" />
+          <e p="List.cs" t="Include" />
+          <e p="MappingProfile.cs" t="Include" />
+          <e p="Unattended.cs" t="Include" />
+        </e>
+        <e p="Application.csproj" t="IncludeRecursive" />
+        <e p="bin" t="ExcludeRecursive" />
+        <e p="Class1.cs" t="Include" />
+        <e p="Comments" t="Include">
+          <e p="CommentDto.cs" t="Include" />
+          <e p="Create.cs" t="Include" />
+          <e p="MappingProfile.cs" t="Include" />
+        </e>
+        <e p="Errors" t="Include">
+          <e p="RestException.cs" t="Include" />
+        </e>
+        <e p="Followers" t="Include">
+          <e p="Add.cs" t="Include" />
+          <e p="Delete.cs" t="Include" />
+          <e p="List.cs" t="Include" />
+        </e>
+        <e p="Interfaces" t="Include">
+          <e p="IJwtGenerator.cs" t="Include" />
+          <e p="IPhotoAccessor.cs" t="Include" />
+          <e p="IUserAccessor.cs" t="Include" />
+        </e>
+        <e p="obj" t="ExcludeRecursive">
+          <e p="Debug" t="Include">
+            <e p="netcoreapp3.1" t="Include">
+              <e p="Application.AssemblyInfo.cs" t="Include" />
+            </e>
+          </e>
+        </e>
+        <e p="Photos" t="Include">
+          <e p="Add.cs" t="Include" />
+          <e p="Delete.cs" t="Include" />
+          <e p="PhotoUploadResult.cs" t="Include" />
+          <e p="SetMain.cs" t="Include" />
+        </e>
+        <e p="Profiles" t="Include">
+          <e p="Details.cs" t="Include" />
+          <e p="Edit.cs" t="Include" />
+          <e p="IProfileReader.cs" t="Include" />
+          <e p="ListActivities.cs" t="Include" />
+          <e p="Profile.cs" t="Include" />
+          <e p="ProfileReader.cs" t="Include" />
+          <e p="UserActivityDto.cs" t="Include" />
+        </e>
+        <e p="User" t="Include">
+          <e p="CurrentUser.cs" t="Include" />
+          <e p="Login.cs" t="Include" />
+          <e p="Register.cs" t="Include" />
+          <e p="User.cs" t="Include" />
+        </e>
+        <e p="Validators" t="Include">
+          <e p="ValidatorExtensions.cs" t="Include" />
+        </e>
+      </e>
+      <e p="Domain" t="IncludeRecursive">
+        <e p="Activity.cs" t="Include" />
+        <e p="AppUser.cs" t="Include" />
+        <e p="bin" t="ExcludeRecursive" />
+        <e p="Comment.cs" t="Include" />
+        <e p="Domain.csproj" t="IncludeRecursive" />
+        <e p="obj" t="ExcludeRecursive">
+          <e p="Debug" t="Include">
+            <e p="netcoreapp3.1" t="Include">
+              <e p="Domain.AssemblyInfo.cs" t="Include" />
+            </e>
+          </e>
+        </e>
+        <e p="Photo.cs" t="Include" />
+        <e p="UserActivity.cs" t="Include" />
+        <e p="UserFollowing.cs" t="Include" />
+        <e p="Value.cs" t="Include" />
+      </e>
+      <e p="Infrastructure" t="IncludeRecursive">
+        <e p="bin" t="ExcludeRecursive" />
+        <e p="Infrastructure.csproj" t="IncludeRecursive" />
+        <e p="obj" t="ExcludeRecursive">
+          <e p="Debug" t="Include">
+            <e p="netcoreapp3.1" t="Include">
+              <e p="Infrastructure.AssemblyInfo.cs" t="Include" />
+            </e>
+          </e>
+        </e>
+        <e p="Photos" t="Include">
+          <e p="CloudinarySettings.cs" t="Include" />
+          <e p="PhotoAccessor.cs" t="Include" />
+        </e>
+        <e p="Security" t="Include">
+          <e p="IsHostRequirement.cs" t="Include" />
+          <e p="JwtGenerator.cs" t="Include" />
+          <e p="UserAccessor.cs" t="Include" />
+        </e>
+      </e>
+      <e p="packages" t="ExcludeRecursive" />
+      <e p="Persistence" t="IncludeRecursive">
+        <e p="bin" t="ExcludeRecursive" />
+        <e p="DataContext.cs" t="Include" />
+        <e p="obj" t="ExcludeRecursive">
+          <e p="Debug" t="Include">
+            <e p="netcoreapp3.1" t="Include">
+              <e p="Persistence.AssemblyInfo.cs" t="Include" />
+            </e>
+          </e>
+        </e>
+        <e p="Persistence.csproj" t="IncludeRecursive" />
+        <e p="Seed.cs" t="Include" />
+      </e>
+      <e p="Reactivities.sln" t="IncludeFlat" />
+    </e>
+  </component>
+</project>
